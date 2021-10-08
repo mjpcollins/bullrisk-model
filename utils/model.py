@@ -1,5 +1,6 @@
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
+import pandas as pd
 
 
 def run_model(df):
@@ -72,8 +73,6 @@ def metrics(y_test, y_pred_prob):
 
 
 if __name__ == '__main__':
-    import pandas as pd
-
     import_file = 'Risk.xlsx'
     file = import_file
     data = pd.ExcelFile(file)
