@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from config.conf import settings
 from utils.read import read_from_storage
 from utils.write import write_output
+from utils.model import run_model
 app = Flask(__name__)
 
 
@@ -15,8 +16,9 @@ def model():
     event = request.json
     print(f'Input: {event}')
     df = read_from_storage(event)
-    print(f'df head: {df.head()}')
-    write_output(df, event)
+    model_out = run_model(df)
+    print(f'df head: {model_out.head()}')
+    write_output(model_out, event)
     return jsonify({'result': 'OK'})
 
 
