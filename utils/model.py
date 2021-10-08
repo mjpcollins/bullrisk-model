@@ -26,7 +26,6 @@ def run_model(df):
     threats = threats[threats['Initial Likelihood'] != 0]
     historic_threats = threats[threats['Risk Status'] != 3]
     historic_threats = historic_threats.dropna().reset_index(drop=True)
-    future_threats = threats[threats['Risk Status'] == 3]
 
     # Balance the datasets so that 50% is 0 50% is 1
     historic_true = historic_threats[historic_threats['Risk Status'] == 1]
@@ -43,7 +42,11 @@ def run_model(df):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
     logreg.fit(X_train, y_train)
 
-    future_threats['prediction'] = logreg.predict(future_threats[model_features])
+    # estimating the possible occurrence of the future risks
+    future_threats = threats[threats['Risk Status'] == 3]
+    X_future = future_threats[model_features]
+    future_threats['prediction'] = logreg.predict(X_future)
+    future_threats['y_prediction_prob'] = logreg.predict_proba(X_future)[:, 1]
     future_threats.columns = [f'model_result_{col}' for col in future_threats.columns]
     all_data = df.set_index('RiskID').join(future_threats.set_index('model_result_RiskID'))
 
